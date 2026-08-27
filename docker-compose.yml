@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: moviedb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  api:
+    build: .
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DB_ENGINE: postgresql
+      DB_NAME: moviedb
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: db
+      DJANGO_DEBUG: "1"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
