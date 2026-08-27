@@ -1,0 +1,66 @@
+Table accounts_user {
+  id bigint [pk]
+  email varchar [unique, not null]
+  name varchar
+  bio text
+  avatar varchar
+  date_joined timestamp
+}
+
+Table posts_post {
+  id bigint [pk]
+  user_id bigint [ref: > accounts_user.id]
+  movie_id int
+  movie_title varchar
+  body text
+  stars int
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table posts_comment {
+  id bigint [pk]
+  post_id bigint [ref: > posts_post.id]
+  user_id bigint [ref: > accounts_user.id]
+  body text
+  created_at timestamp
+}
+
+Table posts_post_likes {
+  post_id bigint [ref: > posts_post.id]
+  user_id bigint [ref: > accounts_user.id]
+  indexes { (post_id, user_id) [pk] }
+}
+
+Table accounts_user_following {
+  from_user_id bigint [ref: > accounts_user.id]
+  to_user_id bigint [ref: > accounts_user.id]
+  indexes { (from_user_id, to_user_id) [pk] }
+}
+
+Table clubs_club {
+  id bigint [pk]
+  name varchar
+  description text
+  genre varchar
+  created_by_id bigint [ref: > accounts_user.id]
+  created_at timestamp
+}
+
+Table clubs_clubmember {
+  id bigint [pk]
+  club_id bigint [ref: > clubs_club.id]
+  user_id bigint [ref: > accounts_user.id]
+  joined_at timestamp
+  indexes { (club_id, user_id) [unique] }
+}
+
+Table watchlist_watchlist {
+  id bigint [pk]
+  user_id bigint [ref: > accounts_user.id]
+  movie_id int
+  movie_title varchar
+  poster_path varchar
+  created_at timestamp
+  indexes { (user_id, movie_id) [unique] }
+}
