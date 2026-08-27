@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema
 
 from .models import Club, ClubMember
 from .serializers import ClubMemberSerializer, ClubSerializer
@@ -28,36 +29,14 @@ class ClubDetailView(generics.RetrieveDestroyAPIView):
 class ClubMembershipView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(responses=ClubMemberSerializer)
     def post(self, request, pk):
         club = generics.get_object_or_404(Club, pk=pk)
         membership, _ = ClubMember.objects.get_or_create(club=club, user=request.user)
         return Response(ClubMemberSerializer(membership).data, status=status.HTTP_201_CREATED)
 
+    @extend_schema(responses=None)
     def delete(self, request, pk):
         membership = generics.get_object_or_404(ClubMember, club_id=pk, user=request.user)
         membership.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-from rest_framework import generics, permissions
-
-from .models import Watchlist
-from .serializers import WatchlistSerializer
-
-
-class WatchlistListCreateView(generics.ListCreateAPIView):
-    serializer_class = WatchlistSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Watchlist.objects.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-
-class WatchlistDetailView(generics.DestroyAPIView):
-    serializer_class = WatchlistSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Watchlist.objects.filter(user=self.request.user)

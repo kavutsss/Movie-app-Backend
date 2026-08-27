@@ -91,6 +91,57 @@ Base URL:
 http://127.0.0.1:8000
 ```
 
+## API Documentation
+
+The project exposes interactive OpenAPI documentation through `drf-spectacular`. To open the documentation locally:
+
+1. Install the backend dependencies:
+
+  ```bash
+  python -m pip install -r requirements.txt
+  ```
+
+2. Apply the database migrations:
+
+  ```bash
+  python manage.py migrate
+  ```
+
+3. Start the Django development server:
+
+  ```bash
+  python manage.py runserver 127.0.0.1:8000
+  ```
+
+4. Open the Swagger UI in a browser:
+
+  [http://127.0.0.1:8000/api/docs/](http://127.0.0.1:8000/api/docs/)
+
+Swagger UI displays the available endpoints, HTTP methods, request parameters, request bodies, response formats, and authorization controls. Expand an endpoint and select **Try it out** to send a request from the documentation page.
+
+| URL | Description |
+| --- | --- |
+| `/api/schema/` | OpenAPI 3 schema in JSON/YAML format |
+| `/api/docs/` | Interactive Swagger UI |
+| `/api/redoc/` | ReDoc documentation |
+
+The documentation URLs are:
+
+- Swagger UI: [http://127.0.0.1:8000/api/docs/](http://127.0.0.1:8000/api/docs/)
+- OpenAPI schema: [http://127.0.0.1:8000/api/schema/](http://127.0.0.1:8000/api/schema/)
+- ReDoc: [http://127.0.0.1:8000/api/redoc/](http://127.0.0.1:8000/api/redoc/)
+
+### Authorizing requests
+
+Protected endpoints require a JWT access token. First log in through `/api/auth/login/` and copy the `access` token from the response. In Swagger UI:
+
+1. Select **Authorize**.
+2. Enter `Bearer ACCESS_TOKEN`, replacing `ACCESS_TOKEN` with your token.
+3. Select **Authorize**, then close the dialog.
+4. Use **Try it out** on a protected endpoint.
+
+The access token is configured to expire after one day. The Swagger interface documents the API available from the running backend; it does not replace authentication or create test data automatically.
+
 The repository's `movie-app/` directory is ignored by Git and is intended for local development only.
 
 ## Configuration
