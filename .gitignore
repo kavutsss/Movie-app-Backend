@@ -1,0 +1,16 @@
+# Local databases
+*.sqlite3
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+
+# Local virtual environments
+movie-app/
+.venv/
+venv/
+
+# Environment files
+.env
+.env.*
+!.env.example
