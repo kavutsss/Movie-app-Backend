@@ -37,3 +37,27 @@ class ClubMembershipView(APIView):
         membership = generics.get_object_or_404(ClubMember, club_id=pk, user=request.user)
         membership.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+from rest_framework import generics, permissions
+
+from .models import Watchlist
+from .serializers import WatchlistSerializer
+
+
+class WatchlistListCreateView(generics.ListCreateAPIView):
+    serializer_class = WatchlistSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Watchlist.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class WatchlistDetailView(generics.DestroyAPIView):
+    serializer_class = WatchlistSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Watchlist.objects.filter(user=self.request.user)
