@@ -19,8 +19,8 @@ def api_root(request):
 urlpatterns = [
     path('', api_root, name='api-health'),
     path('api/', api_root, name='api-root'),
-    path('api/auth/', include('accounts.urls_auth')),
-    path('api/users/', include('accounts.urls_users')),
+    path('api/auth/', include('accounts.url_auth')),
+    path('api/users/', include('accounts.url_users')),
     path('api/', include('posts.urls')),
     path('api/', include('clubs.urls')),
     path('api/', include('watchlist.urls')),
