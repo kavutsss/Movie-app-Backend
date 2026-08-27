@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema
 
 from .serializers import RegisterSerializer, UserSerializer
 
@@ -24,6 +26,7 @@ class UserListView(generics.ListAPIView):
 class LogoutView(APIView):
 	permission_classes = [permissions.IsAuthenticated]
 
+	@extend_schema(responses=OpenApiTypes.OBJECT)
 	def post(self, request):
 		return Response({'detail': 'Logout successful. Discard the JWT tokens on the client.'})
 
@@ -31,6 +34,7 @@ class LogoutView(APIView):
 class AuthApiView(APIView):
 	permission_classes = [permissions.AllowAny]
 
+	@extend_schema(responses=OpenApiTypes.OBJECT)
 	def get(self, request):
 		return Response({
 			'register': '/api/auth/register/',
@@ -56,6 +60,7 @@ class UserDetailView(generics.RetrieveUpdateAPIView):
 class FollowView(APIView):
 	permission_classes = [permissions.IsAuthenticated]
 
+	@extend_schema(responses=OpenApiTypes.OBJECT)
 	def post(self, request, pk):
 		target = generics.get_object_or_404(User, pk=pk)
 		if target == request.user:
@@ -63,6 +68,7 @@ class FollowView(APIView):
 		request.user.following.add(target)
 		return Response({'following': True})
 
+	@extend_schema(responses=None)
 	def delete(self, request, pk):
 		target = generics.get_object_or_404(User, pk=pk)
 		request.user.following.remove(target)
