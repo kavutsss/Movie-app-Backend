@@ -1,3 +1,20 @@
-from django.test import TestCase
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
 
-# Create your tests here.
+from accounts.models import User
+from .models import ClubMember
+
+
+class ClubsApiTests(APITestCase):
+	def setUp(self):
+		self.user = User.objects.create_user(email='leader@example.com', password='strong-pass-123')
+		self.client.force_authenticate(self.user)
+
+	def test_create_join_and_leave_club(self):
+		response = self.client.post(reverse('club-list'), {'name': 'Sci-Fi', 'genre': 'Science fiction'})
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		club_id = response.data['id']
+		self.assertEqual(ClubMember.objects.filter(club_id=club_id).count(), 1)
+		self.assertEqual(self.client.post(reverse('club-membership', args=[club_id])).status_code, status.HTTP_201_CREATED)
+		self.assertEqual(self.client.delete(reverse('club-membership', args=[club_id])).status_code, status.HTTP_204_NO_CONTENT)
