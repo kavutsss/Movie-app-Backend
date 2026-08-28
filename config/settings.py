@@ -74,7 +74,20 @@ SPECTACULAR_SETTINGS = {
 
 SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(days=1)}
 
-CORS_ALLOW_ALL_ORIGINS = True
+FRONTEND_URL = os.getenv(
+    'FRONTEND_URL',
+    'https://movie-app-frontend-iwrvsw38w-fidelesnjoki-arts-projects.vercel.app',
+).rstrip('/')
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        'CORS_ALLOWED_ORIGINS',
+        f'{FRONTEND_URL},http://localhost:5173,http://127.0.0.1:5173',
+    ).split(',')
+    if origin.strip()
+]
+CORS_ALLOW_ALL_ORIGINS = False
+CSRF_TRUSTED_ORIGINS = [FRONTEND_URL]
 
 if os.getenv('DB_ENGINE') == 'postgresql':
     DATABASES = {'default': {

@@ -159,10 +159,12 @@ Settings are read from environment variables in `config/settings.py`.
 | `DB_PASSWORD` | `postgres` | PostgreSQL password. |
 | `DB_HOST` | `db` | PostgreSQL host. Docker uses the service name `db`. |
 | `DB_PORT` | `5432` | PostgreSQL port. |
+| `FRONTEND_URL` | Deployed Vercel URL | Primary frontend origin trusted for CSRF requests. |
+| `CORS_ALLOWED_ORIGINS` | Frontend URL plus local development origins | Comma-separated browser origins allowed to call the API. |
 
 Without `DB_ENGINE=postgresql`, the API uses `db.sqlite3` in the project root. SQLite database files are ignored by Git and must not be committed.
 
-The current settings allow all CORS origins. Restrict `CORS_ALLOW_ALL_ORIGINS` before production use.
+The default CORS allowlist includes the deployed Vercel frontend and local Vite development origins. Set `CORS_ALLOWED_ORIGINS` in deployment to provide a custom comma-separated allowlist.
 
 ## Running the API
 
