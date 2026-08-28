@@ -76,18 +76,24 @@ SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(days=1)}
 
 FRONTEND_URL = os.getenv(
     'FRONTEND_URL',
-    'https://movie-app-frontend-iwrvsw38w-fidelesnjoki-arts-projects.vercel.app',
+    'https://movie-app-frontend-fkokcn5kr-fidelesnjoki-arts-projects.vercel.app',
 ).rstrip('/')
 CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         'CORS_ALLOWED_ORIGINS',
-        f'{FRONTEND_URL},http://localhost:5173,http://127.0.0.1:5173',
+        f'{FRONTEND_URL},https://movie-app-frontend-iwrvsw38w-fidelesnjoki-arts-projects.vercel.app,http://localhost:5173,http://127.0.0.1:5173',
     ).split(',')
     if origin.strip()
 ]
 CORS_ALLOW_ALL_ORIGINS = False
-CSRF_TRUSTED_ORIGINS = [FRONTEND_URL]
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^https://movie-app-frontend-[a-z0-9]+-fidelesnjoki-arts-projects\.vercel\.app$',
+]
+CSRF_TRUSTED_ORIGINS = [
+    FRONTEND_URL,
+    'https://movie-app-frontend-iwrvsw38w-fidelesnjoki-arts-projects.vercel.app',
+]
 
 if os.getenv('DB_ENGINE') == 'postgresql':
     DATABASES = {'default': {
