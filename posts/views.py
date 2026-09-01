@@ -9,7 +9,7 @@ from .serializers import CommentSerializer, PostSerializer
 
 
 class PostListCreateView(generics.ListCreateAPIView):
-	queryset = Post.objects.select_related('user').prefetch_related('likes', 'comments__user')
+	queryset = Post.objects.filter(status=Post.ModerationStatus.VISIBLE).select_related('user').prefetch_related('likes', 'comments__user')
 	serializer_class = PostSerializer
 
 	def perform_create(self, serializer):
@@ -17,7 +17,7 @@ class PostListCreateView(generics.ListCreateAPIView):
 
 
 class PostDetailView(generics.RetrieveDestroyAPIView):
-	queryset = Post.objects.all()
+	queryset = Post.objects.filter(status=Post.ModerationStatus.VISIBLE)
 	serializer_class = PostSerializer
 
 	def destroy(self, request, *args, **kwargs):
@@ -46,14 +46,14 @@ class CommentListCreateView(generics.ListCreateAPIView):
 	serializer_class = CommentSerializer
 
 	def get_queryset(self):
-		return Comment.objects.filter(post_id=self.kwargs['pk']).select_related('user')
+		return Comment.objects.filter(post_id=self.kwargs['pk'], status=Comment.ModerationStatus.VISIBLE).select_related('user')
 
 	def perform_create(self, serializer):
 		serializer.save(post_id=self.kwargs['pk'], user=self.request.user)
 
 
 class CommentDeleteView(generics.DestroyAPIView):
-	queryset = Comment.objects.all()
+	queryset = Comment.objects.filter(status=Comment.ModerationStatus.VISIBLE)
 	serializer_class = CommentSerializer
 
 	def destroy(self, request, *args, **kwargs):
