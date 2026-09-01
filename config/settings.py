@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'posts',
     'clubs',
     'watchlist',
+    'administration',
 ]
 
 AUTH_USER_MODEL = 'accounts.User' # IMPORTANT - custom user from start

@@ -3,11 +3,16 @@ from django.db import models
 
 
 class Club(models.Model):
+	class Status(models.TextChoices):
+		ACTIVE = 'ACTIVE', 'Active'
+		SUSPENDED = 'SUSPENDED', 'Suspended'
+
 	name = models.CharField(max_length=150)
 	description = models.TextField(blank=True)
 	genre = models.CharField(max_length=100, blank=True)
 	created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_clubs')
 	created_at = models.DateTimeField(auto_now_add=True)
+	status = models.CharField(max_length=10, choices=Status.choices, default=Status.ACTIVE)
 
 	class Meta:
 		ordering = ['name']
