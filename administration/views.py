@@ -30,7 +30,7 @@ class AdminListAPIView(generics.ListAPIView):
 
 
 def user_queryset():
-    return User.objects.annotate(
+    return User.objects.prefetch_related('groups').annotate(
         post_count=Count('posts', distinct=True),
         comment_count=Count('comments', distinct=True),
         club_count=Count('club_memberships', distinct=True),
@@ -58,7 +58,7 @@ class DashboardView(APIView):
                 'posts': AdminPostSerializer(Post.objects.select_related('user').annotate(
                     like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True))[:5], many=True).data,
                 'clubs': AdminClubSerializer(Club.objects.select_related('created_by').annotate(
-                    member_count=Count('memberships'))[:5], many=True).data,
+                    member_count=Count('memberships')).order_by('-created_at')[:5], many=True).data,
                 'reports': AdminReportSerializer(Report.objects.select_related('reported_by', 'resolved_by', 'content_type')[:5], many=True).data,
             },
         })
@@ -85,7 +85,9 @@ class AdminUserListView(AdminListAPIView):
 class AdminUserDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsPlatformAdmin]
     serializer_class = AdminUserSerializer
-    queryset = user_queryset()
+
+    def get_queryset(self):
+        return user_queryset()
 
     def _ensure_not_last_superuser(self, user):
         if user.is_superuser and User.objects.filter(is_superuser=True).count() <= 1:
@@ -93,7 +95,7 @@ class AdminUserDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         user = self.get_object()
-        self._ensure_not_last_superuser(user)
+        self._ensure_not_last_superuser(user)  # check superuser guard first
         if user == request.user:
             return Response({'detail': 'You cannot delete your own account.'}, status=status.HTTP_400_BAD_REQUEST)
         return super().destroy(request, *args, **kwargs)
@@ -130,7 +132,7 @@ class AdminClubListView(AdminListAPIView):
             queryset = queryset.filter(status=state.upper())
         if genre := self.request.query_params.get('genre'):
             queryset = queryset.filter(genre__iexact=genre)
-        return queryset
+        return queryset.order_by('name')
 
 
 class AdminClubDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -152,7 +154,9 @@ class AdminClubStatusView(APIView):
             return Response({'status': f'Must be one of: {", ".join(Club.Status.values)}.'}, status=status.HTTP_400_BAD_REQUEST)
         club.status = value
         club.save(update_fields=['status'])
-        return Response(AdminClubSerializer(AdminClubDetailView.queryset.get(pk=club.pk)).data)
+        refreshed = Club.objects.select_related('created_by').prefetch_related('memberships__user').annotate(
+            member_count=Count('memberships')).get(pk=club.pk)
+        return Response(AdminClubSerializer(refreshed).data)
 
 
 class AdminPostListView(AdminListAPIView):
@@ -164,7 +168,7 @@ class AdminPostListView(AdminListAPIView):
         queryset = Post.objects.select_related('user').annotate(like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True))
         if state := self.request.query_params.get('status'):
             queryset = queryset.filter(status=state.upper())
-        return queryset
+        return queryset.order_by('-created_at')
 
 
 class AdminPostDetailView(generics.RetrieveAPIView):
@@ -186,7 +190,9 @@ class AdminPostModerateView(APIView):
             return Response({'status': f'Must be one of: {", ".join(Post.ModerationStatus.values)}.'}, status=status.HTTP_400_BAD_REQUEST)
         post.status = value
         post.save(update_fields=['status', 'updated_at'])
-        return Response(AdminPostSerializer(AdminPostDetailView.queryset.get(pk=post.pk)).data)
+        refreshed = Post.objects.select_related('user').annotate(
+            like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True)).get(pk=post.pk)
+        return Response(AdminPostSerializer(refreshed).data)
 
 
 class AdminPostDeleteView(generics.DestroyAPIView):
