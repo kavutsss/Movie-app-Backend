@@ -16,9 +16,9 @@ class AdminUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'name', 'email', 'bio', 'avatar', 'is_active', 'is_staff', 'is_superuser',
+        fields = ['id', 'name', 'email', 'bio', 'avatar', 'is_active',
                   'role', 'date_joined', 'last_login', 'post_count', 'comment_count', 'club_count']
-        read_only_fields = ['id', 'email', 'is_active', 'is_staff', 'is_superuser', 'role', 'date_joined',
+        read_only_fields = ['id', 'email', 'is_active', 'role', 'date_joined',
                             'last_login', 'post_count', 'comment_count', 'club_count']
 
     def get_role(self, obj):
@@ -40,9 +40,9 @@ class AdminClubSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_by', 'member_count', 'members', 'created_at']
 
     def get_members(self, obj):
-        memberships = obj.memberships.select_related('user').all()[:50]
-        return [{'id': item.user_id, 'name': item.user.name, 'email': item.user.email, 'joined_at': item.joined_at}
-                for item in memberships]
+        memberships = list(obj.memberships.all())[:50]  # uses prefetch cache, sliced in Python
+        return [{'id': m.user_id, 'name': m.user.name, 'email': m.user.email, 'joined_at': m.joined_at}
+                for m in memberships]
 
 
 class AdminPostSerializer(serializers.ModelSerializer):
