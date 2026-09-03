@@ -1,0 +1,5 @@
+version: 2
+secret:
+  ignored_paths:
+    - administration/migrations/0001_initial.py
+    - administration/migrations/0002_alter_activitylog_event_type.py

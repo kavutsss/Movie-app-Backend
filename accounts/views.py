@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema
 
+from administration.models import ActivityLog
+from administration.services import log_activity
 from .serializers import RegisterSerializer, UserSerializer
 
 User = get_user_model()
@@ -28,6 +30,7 @@ class LogoutView(APIView):
 
 	@extend_schema(responses=OpenApiTypes.OBJECT)
 	def post(self, request):
+		log_activity(request, ActivityLog.EventType.LOGOUT)
 		return Response({'detail': 'Logout successful. Discard the JWT tokens on the client.'})
 
 

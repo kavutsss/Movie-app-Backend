@@ -10,8 +10,10 @@ from rest_framework.views import APIView
 
 from clubs.models import Club
 from posts.models import Comment, Post, Report
+from .models import ActivityLog
 from .permissions import IsPlatformAdmin
-from .serializers import (AdminClubSerializer, AdminCommentSerializer, AdminPostSerializer,
+from .serializers import (ActivityLogSerializer, AdminClubSerializer, AdminCommentSerializer, AdminMovieSerializer,
+                          AdminPostSerializer,
                           AdminReportSerializer, AdminUserSerializer)
 
 User = get_user_model()
@@ -54,6 +56,7 @@ class DashboardView(APIView):
                 'pending_reports': Report.objects.filter(status=Report.Status.PENDING).count(),
             },
             'recent_activity': {
+                'activities': ActivityLogSerializer(ActivityLog.objects.select_related('actor', 'review')[:10], many=True).data,
                 'users': AdminUserSerializer(user_queryset()[:5], many=True).data,
                 'posts': AdminPostSerializer(Post.objects.select_related('user').annotate(
                     like_count=Count('likes', distinct=True), comment_count=Count('comments', distinct=True))[:5], many=True).data,
@@ -171,6 +174,18 @@ class AdminPostListView(AdminListAPIView):
         return queryset.order_by('-created_at')
 
 
+class AdminMovieListView(AdminListAPIView):
+    serializer_class = AdminMovieSerializer
+    search_fields = ['movie_title']
+    ordering_fields = ['movie_id', 'movie_title', 'review_count']
+
+    def get_queryset(self):
+        queryset = Post.objects.values('movie_id', 'movie_title').annotate(
+            review_count=Count('id', filter=Q(stars__isnull=False)),
+        )
+        return queryset.order_by('-review_count', 'movie_title')
+
+
 class AdminPostDetailView(generics.RetrieveAPIView):
     permission_classes = [IsPlatformAdmin]
     serializer_class = AdminPostSerializer
@@ -198,6 +213,10 @@ class AdminPostModerateView(APIView):
 class AdminPostDeleteView(generics.DestroyAPIView):
     permission_classes = [IsPlatformAdmin]
     queryset = Post.objects.all()
+
+
+class AdminReviewDeleteView(AdminPostDeleteView):
+    queryset = Post.objects.filter(stars__isnull=False)
 
 
 class AdminCommentListView(AdminListAPIView):
@@ -236,6 +255,18 @@ class AdminCommentDeleteView(generics.DestroyAPIView):
 class AdminReviewListView(AdminPostListView):
     def get_queryset(self):
         return super().get_queryset().filter(stars__isnull=False)
+
+
+class AdminActivityListView(AdminListAPIView):
+    serializer_class = ActivityLogSerializer
+    search_fields = ['movie_title', 'actor__email', 'actor__name']
+    ordering_fields = ['created_at', 'event_type']
+
+    def get_queryset(self):
+        queryset = ActivityLog.objects.select_related('actor', 'review')
+        if event_type := self.request.query_params.get('event_type'):
+            queryset = queryset.filter(event_type=event_type.upper())
+        return queryset
 
 
 class AdminReportListView(AdminListAPIView):

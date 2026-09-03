@@ -2,6 +2,9 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from administration.models import ActivityLog
+from administration.services import log_activity
+
 User = get_user_model()
 
 
@@ -20,7 +23,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['name', 'email', 'password']
 
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        request = self.context.get('request')
+        if request:
+            log_activity(request, ActivityLog.EventType.REGISTER, actor=user)
+        return user
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
