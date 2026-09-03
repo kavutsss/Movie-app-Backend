@@ -26,7 +26,8 @@ class PostDetailView(generics.RetrieveDestroyAPIView):
 	serializer_class = PostSerializer
 
 	def destroy(self, request, *args, **kwargs):
-		if self.get_object().user != request.user:
+		obj = self.get_object()
+		if obj.user != request.user and not request.user.is_staff:
 			return Response({'detail': 'Only the post owner can delete it.'}, status=status.HTTP_403_FORBIDDEN)
 		return super().destroy(request, *args, **kwargs)
 

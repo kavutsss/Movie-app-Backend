@@ -84,7 +84,7 @@ SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(days=1)}
 
 FRONTEND_URL = os.getenv(
     'FRONTEND_URL',
-    'https://movie-app-frontend-tawny.vercel.app',
+    'https://movie-app-frontend-fkokcn5kr-fidelesnjoki-arts-projects.vercel.app',
 ).rstrip('/')
 
 CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'True') in ('1', 'True', 'true')
@@ -93,7 +93,7 @@ CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         'CORS_ALLOWED_ORIGINS',
-        f'{FRONTEND_URL},https://movie-app-frontend-tawny.vercel.app,http://localhost:5173,http://127.0.0.1:5173',
+        f'{FRONTEND_URL},https://movie-app-frontend-fkokcn5kr-fidelesnjoki-arts-projects.vercel.app,https://movie-app-frontend-tawny.vercel.app,http://localhost:5173,http://127.0.0.1:5173',
     ).split(',')
     if origin.strip()
 ]

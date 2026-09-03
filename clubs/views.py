@@ -25,7 +25,8 @@ class ClubDetailView(generics.RetrieveDestroyAPIView):
     serializer_class = ClubSerializer
 
     def destroy(self, request, *args, **kwargs):
-        if self.get_object().created_by != request.user:
+        obj = self.get_object()
+        if obj.created_by != request.user and not request.user.is_staff:
             return Response({'detail': 'Only the club owner can delete it.'}, status=status.HTTP_403_FORBIDDEN)
         return super().destroy(request, *args, **kwargs)
 
