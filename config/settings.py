@@ -40,6 +40,7 @@ TEMPLATES = [{
 WSGI_APPLICATION = 'config.wsgi.application'
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -47,7 +48,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -77,23 +77,28 @@ SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(days=1)}
 
 FRONTEND_URL = os.getenv(
     'FRONTEND_URL',
-    'https://movie-app-frontend-fkokcn5kr-fidelesnjoki-arts-projects.vercel.app',
+    'https://movie-app-frontend-tawny.vercel.app',
 ).rstrip('/')
+
+CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'True') in ('1', 'True', 'true')
+
 CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         'CORS_ALLOWED_ORIGINS',
-        f'{FRONTEND_URL},https://movie-app-frontend-iwrvsw38w-fidelesnjoki-arts-projects.vercel.app,http://localhost:5173,http://127.0.0.1:5173',
+        f'{FRONTEND_URL},https://movie-app-frontend-tawny.vercel.app,http://localhost:5173,http://127.0.0.1:5173',
     ).split(',')
     if origin.strip()
 ]
-CORS_ALLOW_ALL_ORIGINS = False
+
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    r'^https://movie-app-frontend-[a-z0-9]+-fidelesnjoki-arts-projects\.vercel\.app$',
+    r'^https://.*\.vercel\.app$',
 ]
 CSRF_TRUSTED_ORIGINS = [
-    FRONTEND_URL,
-    'https://movie-app-frontend-iwrvsw38w-fidelesnjoki-arts-projects.vercel.app',
+    'https://movie-app-frontend-tawny.vercel.app',
+    'https://*.vercel.app',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
 ]
 
 if os.getenv('DB_ENGINE') == 'postgresql':
