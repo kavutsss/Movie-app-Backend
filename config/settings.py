@@ -1,10 +1,17 @@
 import os
+import secrets
 from pathlib import Path
 from datetime import timedelta
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'development-only-secret-key-change-me-2026')
 DEBUG = os.getenv('DJANGO_DEBUG', '1') == '1'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = secrets.token_urlsafe(50)
+    else:
+        raise ImproperlyConfigured('DJANGO_SECRET_KEY must be set when DJANGO_DEBUG=0.')
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 INSTALLED_APPS = [
