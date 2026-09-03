@@ -3,8 +3,8 @@ from django.urls import path
 from .views import (AdminClubDetailView, AdminClubListView, AdminClubStatusView, AdminCommentDeleteView,
                     AdminCommentListView, AdminCommentModerateView, AdminPostDeleteView, AdminPostDetailView,
                     AdminPostListView, AdminPostModerateView, AdminReportDetailView, AdminReportListView,
-                    AdminReviewListView, AdminUserDetailView, AdminUserListView, AdminUserStatusView,
-                    AnalyticsView, DashboardView)
+                    AdminReviewDeleteView, AdminReviewListView, AdminUserDetailView, AdminUserListView, AdminUserStatusView,
+                    AdminActivityListView, AdminMovieListView, AnalyticsView, DashboardView)
 
 urlpatterns = [
     path('dashboard/', DashboardView.as_view(), name='admin-dashboard'),
@@ -15,6 +15,7 @@ urlpatterns = [
     path('clubs/<int:pk>/', AdminClubDetailView.as_view(), name='admin-club-detail'),
     path('clubs/<int:pk>/status/', AdminClubStatusView.as_view(), name='admin-club-status'),
     path('posts/', AdminPostListView.as_view(), name='admin-post-list'),
+    path('movies/', AdminMovieListView.as_view(), name='admin-movie-list'),
     path('posts/<int:pk>/', AdminPostDetailView.as_view(), name='admin-post-detail'),
     path('posts/<int:pk>/moderate/', AdminPostModerateView.as_view(), name='admin-post-moderate'),
     path('posts/<int:pk>/delete/', AdminPostDeleteView.as_view(), name='admin-post-delete'),
@@ -22,7 +23,9 @@ urlpatterns = [
     path('comments/<int:pk>/moderate/', AdminCommentModerateView.as_view(), name='admin-comment-moderate'),
     path('comments/<int:pk>/delete/', AdminCommentDeleteView.as_view(), name='admin-comment-delete'),
     path('reviews/', AdminReviewListView.as_view(), name='admin-review-list'),
+    path('reviews/<int:pk>/', AdminReviewDeleteView.as_view(), name='admin-review-delete'),
     path('reports/', AdminReportListView.as_view(), name='admin-report-list'),
     path('reports/<int:pk>/', AdminReportDetailView.as_view(), name='admin-report-detail'),
     path('analytics/', AnalyticsView.as_view(), name='admin-analytics'),
+    path('activities/', AdminActivityListView.as_view(), name='admin-activity-list'),
 ]
