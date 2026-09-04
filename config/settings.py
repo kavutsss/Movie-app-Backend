@@ -33,6 +33,11 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = 'accounts.User' # IMPORTANT - custom user from start
 
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 ROOT_URLCONF = 'config.urls'
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
