@@ -11,6 +11,7 @@ from .serializers import CommentSerializer, PostSerializer
 
 
 class PostListCreateView(generics.ListCreateAPIView):
+	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	queryset = Post.objects.filter(status=Post.ModerationStatus.VISIBLE).select_related('user').prefetch_related('likes', 'comments__user')
 	serializer_class = PostSerializer
 
@@ -22,6 +23,7 @@ class PostListCreateView(generics.ListCreateAPIView):
 
 
 class PostDetailView(generics.RetrieveDestroyAPIView):
+	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	queryset = Post.objects.filter(status=Post.ModerationStatus.VISIBLE)
 	serializer_class = PostSerializer
 

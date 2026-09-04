@@ -10,6 +10,7 @@ from .serializers import ClubMemberSerializer, ClubSerializer
 
 
 class ClubListCreateView(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Club.objects.select_related('created_by').prefetch_related('memberships')
     serializer_class = ClubSerializer
 
@@ -21,6 +22,7 @@ class ClubListCreateView(generics.ListCreateAPIView):
 
 
 class ClubDetailView(generics.RetrieveDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Club.objects.all()
     serializer_class = ClubSerializer
 
