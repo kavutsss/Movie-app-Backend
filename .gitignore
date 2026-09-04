@@ -11,6 +11,11 @@ movie-app/
 venv/
 
 # Environment files
+# Environment files
 .env
 .env.*
 !.env.example
+
+# Static collected files
+staticfiles/
+
