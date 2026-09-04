@@ -1,10 +1,17 @@
 import os
+import secrets
 from pathlib import Path
 from datetime import timedelta
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'development-only-secret-key-change-me-2026')
 DEBUG = os.getenv('DJANGO_DEBUG', '1') == '1'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = secrets.token_urlsafe(50)
+    else:
+        raise ImproperlyConfigured('DJANGO_SECRET_KEY must be set when DJANGO_DEBUG=0.')
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 INSTALLED_APPS = [
@@ -25,6 +32,11 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User' # IMPORTANT - custom user from start
+
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 ROOT_URLCONF = 'config.urls'
 TEMPLATES = [{
@@ -74,11 +86,14 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
-SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(days=1)}
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
 
 FRONTEND_URL = os.getenv(
     'FRONTEND_URL',
-    'https://movie-app-frontend-tawny.vercel.app',
+    'https://movie-app-frontend-fkokcn5kr-fidelesnjoki-arts-projects.vercel.app',
 ).rstrip('/')
 
 CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'True') in ('1', 'True', 'true')
@@ -87,7 +102,7 @@ CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         'CORS_ALLOWED_ORIGINS',
-        f'{FRONTEND_URL},https://movie-app-frontend-tawny.vercel.app,http://localhost:5173,http://127.0.0.1:5173',
+        f'{FRONTEND_URL},https://movie-app-frontend-fkokcn5kr-fidelesnjoki-arts-projects.vercel.app,https://movie-app-frontend-tawny.vercel.app,http://localhost:5173,http://127.0.0.1:5173',
     ).split(',')
     if origin.strip()
 ]
@@ -102,13 +117,25 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:5173',
 ]
 
-if os.getenv('DB_ENGINE') == 'postgresql':
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    import urllib.parse as urlparse
+    url = urlparse.urlparse(DATABASE_URL)
+    DATABASES = {'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': url.path[1:],
+        'USER': url.username,
+        'PASSWORD': url.password,
+        'HOST': url.hostname,
+        'PORT': url.port or 5432,
+    }}
+elif os.getenv('DB_ENGINE') == 'postgresql':
     DATABASES = {'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME', 'moviedb'),
         'USER': os.getenv('DB_USER', 'postgres'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
-        'HOST': os.getenv('DB_HOST', 'db'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
     }}
 else:

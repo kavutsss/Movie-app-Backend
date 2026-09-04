@@ -1,0 +1,206 @@
+[
+{
+  "model": "clubs.club",
+  "pk": 1,
+  "fields": {
+    "name": "Afrocinema",
+    "description": "Celebrating African films, directors and storytelling from across the continent.",
+    "genre": "World",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.752Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 2,
+  "fields": {
+    "name": "Anime & Manga Adaptations",
+    "description": "Comparing anime source material to live action adaptations — what works and what does not.",
+    "genre": "Sci-Fi",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.777Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 3,
+  "fields": {
+    "name": "K-Drama Addicts",
+    "description": "Korean dramas, romance, thrillers and everything in between. No spoilers without warning.",
+    "genre": "Drama",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.798Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 4,
+  "fields": {
+    "name": "Bollywood Masala",
+    "description": "Indian cinema from golden classics to modern blockbusters. Dance, drama and everything masala.",
+    "genre": "World",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.818Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 5,
+  "fields": {
+    "name": "Documentary Hunters",
+    "description": "True crime, nature, history and social documentaries. If it is real, we watch it.",
+    "genre": "Documentary",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.839Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 6,
+  "fields": {
+    "name": "Feel Good Films",
+    "description": "Movies that leave you smiling no matter what. Bring your recommendations and good vibes only.",
+    "genre": "Comedy",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.860Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 7,
+  "fields": {
+    "name": "Midnight Cinema",
+    "description": "Late night watches, cult classics and hidden gems best enjoyed after dark.",
+    "genre": "Noir",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.882Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 8,
+  "fields": {
+    "name": "Cry Club",
+    "description": "Films that hit different emotionally. Tissues required. No judgment here.",
+    "genre": "Drama",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.902Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 9,
+  "fields": {
+    "name": "Comfort Rewatch",
+    "description": "Movies you have seen 10 or more times and still love. Share your ultimate comfort films.",
+    "genre": "Drama",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.925Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 10,
+  "fields": {
+    "name": "First Time Watchers",
+    "description": "Reacting to classics for the first time. Fresh eyes, honest takes.",
+    "genre": "Art House",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.947Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 11,
+  "fields": {
+    "name": "One Film A Week",
+    "description": "Commit to watching and reviewing one film every week. Consistency builds taste.",
+    "genre": "Drama",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.968Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 12,
+  "fields": {
+    "name": "Underrated & Overlooked",
+    "description": "Films that deserved way more attention. Hidden gems and forgotten masterpieces only.",
+    "genre": "Art House",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:47.988Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 13,
+  "fields": {
+    "name": "Directors Spotlight",
+    "description": "Deep diving one director at a time — Kubrick, Nolan, Villeneuve, Kurosawa and beyond.",
+    "genre": "Art House",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:48.009Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 14,
+  "fields": {
+    "name": "Sequel vs Original",
+    "description": "Debating whether sequels lived up to the original. Honest comparisons, no nostalgia bias.",
+    "genre": "Thriller",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:48.033Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 15,
+  "fields": {
+    "name": "Binge or Skip",
+    "description": "Honest reviews on whether a series is worth your time. Save people from bad TV.",
+    "genre": "Drama",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:48.055Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 16,
+  "fields": {
+    "name": "Cancelled Too Soon",
+    "description": "Mourning shows that ended before their time. A support group for the heartbroken.",
+    "genre": "Drama",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:48.076Z",
+    "status": "ACTIVE"
+  }
+},
+{
+  "model": "clubs.club",
+  "pk": 17,
+  "fields": {
+    "name": "Finale Reactions",
+    "description": "Discussing series finales good and bad. Did it stick the landing or ruin everything?",
+    "genre": "Thriller",
+    "created_by": 2,
+    "created_at": "2026-09-03T22:39:48.096Z",
+    "status": "ACTIVE"
+  }
+}
+]

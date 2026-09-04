@@ -5,6 +5,7 @@ from rest_framework.test import APITestCase
 from accounts.models import User
 from clubs.models import Club
 from posts.models import Comment, Post, Report
+from administration.models import ActivityLog
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -31,6 +32,18 @@ class AdminAuthTests(APITestCase):
         self.client.force_authenticate(self.admin)
         self.assertIn(self.client.get(url).status_code, [status.HTTP_200_OK, status.HTTP_404_NOT_FOUND])
         self.client.force_authenticate(None)
+
+    def test_activity_feed_is_persisted(self):
+        self.client.force_authenticate(None)
+        self.client.post(reverse('login'), {'email': self.user.email, 'password': 'pass'}, format='json')
+        self.assertTrue(ActivityLog.objects.filter(actor=self.user, event_type=ActivityLog.EventType.LOGIN).exists())
+
+    def test_admin_can_list_activity(self):
+        ActivityLog.objects.create(actor=self.user, event_type=ActivityLog.EventType.LOGIN)
+        self.client.force_authenticate(self.admin)
+        response = self.client.get(reverse('admin-activity-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['results'][0]['event_type'], ActivityLog.EventType.LOGIN)
 
     def test_dashboard_access(self):
         self._assert_access('admin-dashboard')

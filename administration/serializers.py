@@ -4,8 +4,26 @@ from rest_framework import serializers
 
 from clubs.models import Club, ClubMember
 from posts.models import Comment, Post, Report
+from .models import ActivityLog
 
 User = get_user_model()
+
+
+class ActivityLogSerializer(serializers.ModelSerializer):
+    actor = serializers.StringRelatedField()
+    actor_email = serializers.EmailField(source='actor.email', read_only=True, allow_null=True)
+    event = serializers.CharField(source='get_event_type_display', read_only=True)
+
+    class Meta:
+        model = ActivityLog
+        fields = ['id', 'actor', 'actor_email', 'event_type', 'event', 'movie_id', 'movie_title', 'review',
+                  'ip_address', 'metadata', 'created_at']
+
+
+class AdminMovieSerializer(serializers.Serializer):
+    movie_id = serializers.IntegerField()
+    movie_title = serializers.CharField()
+    review_count = serializers.IntegerField()
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
