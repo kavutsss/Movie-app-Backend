@@ -86,7 +86,10 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
-SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(days=1)}
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
 
 FRONTEND_URL = os.getenv(
     'FRONTEND_URL',
