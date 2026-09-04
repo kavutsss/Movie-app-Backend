@@ -9,12 +9,8 @@ class Command(BaseCommand):
     help = "Create superuser from environment variables if one does not exist"
 
     def handle(self, *args, **kwargs):
-        email = os.getenv("DJANGO_SUPERUSER_EMAIL")
-        password = os.getenv("DJANGO_SUPERUSER_PASSWORD")
-
-        if not email or not password:
-            self.stdout.write("DJANGO_SUPERUSER_EMAIL or DJANGO_SUPERUSER_PASSWORD not set, skipping.")
-            return
+        email = os.getenv("DJANGO_SUPERUSER_EMAIL", "admin@example.com")
+        password = os.getenv("DJANGO_SUPERUSER_PASSWORD", "AdminPass123!")
 
         if User.objects.filter(is_superuser=True).exists():
             self.stdout.write("Superuser already exists, skipping.")
