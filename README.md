@@ -13,6 +13,7 @@ Django REST Framework backend for a movie social application. The project is org
 - [Configuration](#configuration)
 - [Running the API](#running-the-api)
 - [Authentication](#authentication)
+- [Users API](#users-api)
 - [API conventions](#api-conventions)
 - [Posts API](#posts-api)
 - [Clubs API](#clubs-api)
@@ -199,16 +200,37 @@ The settings configure Simple JWT as the default authentication class:
 Authorization: Bearer ACCESS_TOKEN
 ```
 
-The intended authentication routes are:
+The authentication routes are:
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
+| `GET` | `/api/auth/` | Auth API root (status check) |
 | `POST` | `/api/auth/register/` | Register a user |
 | `POST` | `/api/auth/login/` | Obtain access and refresh tokens |
 | `POST` | `/api/auth/token/refresh/` | Obtain a new access token |
 | `POST` | `/api/auth/logout/` | End the client session |
 
-These routes depend on the accounts implementation. On the current `dev` branch, `accounts/models.py`, serializers, views, and URL modules are incomplete, so authentication must be restored before these endpoints can run.
+### Login example
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/auth/login/ \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username_or_email": "user@example.com",
+    "password": "secure_password"
+  }'
+```
+
+Response includes `access` and `refresh` tokens:
+
+```json
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+}
+```
+
+Use the `access` token in subsequent requests with `Authorization: Bearer ACCESS_TOKEN`.
 
 ## API conventions
 
@@ -225,6 +247,36 @@ These routes depend on the accounts implementation. On the current `dev` branch,
 
 The global REST framework permission is `IsAuthenticatedOrReadOnly`. The view-level permissions for the APIs below are authoritative.
 
+## Users API
+
+User endpoints manage user profiles and follow relationships.
+
+### Endpoints
+
+| Method | Endpoint | Authentication | Description |
+| --- | --- | --- | --- |
+| `GET` | `/api/users/` | Public | List all users |
+| `GET` | `/api/users/<id>/` | Public | Retrieve a user profile |
+| `POST` | `/api/users/<id>/follow/` | Required | Follow a user |
+| `DELETE` | `/api/users/<id>/follow/` | Required | Unfollow a user |
+
+### Follow a user
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/users/2/follow/ \
+  -H 'Authorization: Bearer ACCESS_TOKEN'
+```
+
+Response:
+
+```json
+{
+  "following": true
+}
+```
+
+Delete request returns `following: false` to unfollow.
+
 ## Posts API
 
 Posts are ordered newest first. A post belongs to its authenticated creator and can contain comments and likes.
@@ -239,9 +291,10 @@ Posts are ordered newest first. A post belongs to its authenticated creator and 
 | `DELETE` | `/api/posts/<id>/` | Post owner | Delete a post |
 | `POST` | `/api/posts/<id>/like/` | Required | Like a post |
 | `DELETE` | `/api/posts/<id>/like/` | Required | Remove your like |
-| `GET` | `/api/posts/<id>/comments/` | Public by default | List comments |
-| `POST` | `/api/posts/<id>/comments/` | Required by default | Add a comment |
+| `GET` | `/api/posts/<id>/comments/` | Public | List comments on a post |
+| `POST` | `/api/posts/<id>/comments/` | Required | Add a comment to a post |
 | `DELETE` | `/api/comments/<id>/` | Comment owner | Delete a comment |
+| `GET` | `/api/movies/<movie_id>/check/` | Public | Check if a movie has posts |
 
 ### Create a post
 
@@ -257,6 +310,22 @@ curl -X POST http://127.0.0.1:8000/api/posts/ \
     "body": "Worth watching",
     "stars": 5
   }'
+```
+
+### Check if a movie has posts
+
+```bash
+curl http://127.0.0.1:8000/api/movies/550/check/
+```
+
+Response:
+
+```json
+{
+  "movie_id": 550,
+  "has_posts": true,
+  "post_count": 3
+}
 ```
 
 The server sets `user`, `created_at`, and `updated_at`. These fields cannot be supplied by the client.
@@ -360,7 +429,8 @@ A watchlist is private to the authenticated user. The API filters every list, cr
 | Method | Endpoint | Authentication | Description |
 | --- | --- | --- | --- |
 | `GET` | `/api/watchlist/` | Required | List your watchlist |
-| `POST` | `/api/watchlist/` | Required | Add a movie |
+| `POST` | `/api/watchlist/` | Required | Add a movie to your watchlist |
+| `GET` | `/api/watchlist/<id>/` | Required | Retrieve a watchlist entry |
 | `DELETE` | `/api/watchlist/<id>/` | Required | Remove one of your movies |
 
 Watchlist entries are ordered newest first. Required fields are `movie_id` and `movie_title`; `poster_path` is optional.
